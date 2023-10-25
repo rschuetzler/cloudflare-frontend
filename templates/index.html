@@ -13,15 +13,30 @@
       <button type="submit">Search</button>
     </form>
 
-    <ul>
-      {% for record in dns_records %}
-      <li>
-        {{ record.name }} {{ record.type }} {{ record.content }}
-        <a href="{{ record.edit_url }}">Edit</a>
-        <a href="{{ record.delete_url }}">DELETE</a>
-      </li>
-      {% endfor %}
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Content</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in dns_records %}
+          {% if record.type != 'TXT' %}
+            <tr>
+              <td>{{ record.name }}</td>
+              <td>{{ record.type }}</td>
+              <td>{{ record.content }}</td>
+              <td><a href="{{ record.edit_url }}">Edit</a></td>
+              <td><a href="{{ record.delete_url }}">DELETE</a></td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
     <!-- BEGIN: pagination -->
     {% if page_obj.has_previous %}
     <a href="?page={{ page_obj.previous_page_number }}">previous</a>
