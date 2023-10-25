@@ -1,0 +1,21 @@
+<!-- FILEPATH: /Users/ryan/code/cloudflare-frontend/templates/edit.html -->
+
+{% extends 'base.html' %} {% block content %}
+<h1>Edit DNS Record</h1>
+<form method="POST">
+  <label for="name">Name:</label>
+  <input type="text" name="name" value="" /><br />
+  <label for="type">Type:</label>
+  <select name="type">
+    <option value="A">A</option>
+    <option value="CNAME">CNAME</option>
+    <option value="MX">MX</option>
+    <option value="TXT">TXT</option></select
+  ><br />
+  <label for="content">Content:</label>
+  <input type="text" name="content" value="" /><br />
+  <label for="ttl">TTL:</label>
+  <input type="text" name="ttl" value="1" /><br />
+  <input type="submit" value="Save" />
+</form>
+{% endblock %}

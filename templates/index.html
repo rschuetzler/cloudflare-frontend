@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DNS Information</title>
+  </head>
+  <body>
+    <h1>DNS Information</h1>
+    <p>Domain: is404.net</p>
+    <h2>Records</h2>
+    <a href="/create">Create new record</a>
+    <form action="" method="get">
+      <input type="text" name="q" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
+
+    <ul>
+      {% for record in dns_records %}
+      <li>
+        {{ record.name }} {{ record.type }} {{ record.content }}
+        <a href="{{ record.edit_url }}">Edit</a>
+        <a href="{{ record.delete_url }}">DELETE</a>
+      </li>
+      {% endfor %}
+    </ul>
+    <!-- BEGIN: pagination -->
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+    {% endif %}
+    <span class="current-page">{{ page_obj.number }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">next</a>
+    {% endif %}
+    <!-- END: pagination -->
+  </body>
+</html>
