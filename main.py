@@ -1,5 +1,4 @@
 import os
-import pprint
 
 import CloudFlare
 from dotenv import find_dotenv, load_dotenv
@@ -18,7 +17,6 @@ templates = Jinja2Templates(directory="templates")
 cf = CloudFlare.CloudFlare(token=TOKEN, raw=True)
 
 # Remove this before deploying
-pp = pprint.PrettyPrinter(indent=4)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -76,7 +74,6 @@ async def create_dns_record(
             "ttl": ttl,
         },
     )
-    print(response)
 
     return {"message": "DNS record created successfully"}
 
