@@ -4,6 +4,9 @@
 
 {% block content %}
   <h1>Edit DNS Record</h1>
+  <p>
+    To edit the record, you need to specify the name, type, content, and TTL. Make sure the content is appropriate for the type of record you are editing.
+  </p>
   <form method="POST">
     <label for="name">Name:</label>
     <input type="text" name="name" value="{{ record.name }}"><br>

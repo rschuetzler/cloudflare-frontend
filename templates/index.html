@@ -8,6 +8,10 @@
     <p>Domain: is404.net</p>
     <h2>Records</h2>
     <a href="/create">Create new record</a>
+    <p>
+      You can search for a record here. You must include the full domain name
+      (e.g., example.is404.net).
+    </p>
     <form action="" method="get">
       <input type="text" name="q" placeholder="Search..." />
       <button type="submit">Search</button>
@@ -24,17 +28,15 @@
         </tr>
       </thead>
       <tbody>
-        {% for record in dns_records %}
-          {% if record.type != 'TXT' %}
-            <tr>
-              <td>{{ record.name }}</td>
-              <td>{{ record.type }}</td>
-              <td>{{ record.content }}</td>
-              <td><a href="{{ record.edit_url }}">Edit</a></td>
-              <td><a href="{{ record.delete_url }}">DELETE</a></td>
-            </tr>
-          {% endif %}
-        {% endfor %}
+        {% for record in dns_records %} {% if record.type != 'TXT' %}
+        <tr>
+          <td>{{ record.name }}</td>
+          <td>{{ record.type }}</td>
+          <td>{{ record.content }}</td>
+          <td><a href="{{ record.edit_url }}">Edit</a></td>
+          <td><a href="{{ record.delete_url }}">DELETE</a></td>
+        </tr>
+        {% endif %} {% endfor %}
       </tbody>
     </table>
     <!-- BEGIN: pagination -->

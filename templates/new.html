@@ -2,6 +2,15 @@
 
 {% extends 'base.html' %} {% block content %}
 <h1>Edit DNS Record</h1>
+<p>
+  To create a new DNS record, you must enter the following information:
+  <ul>
+    <li>The name of the record, including the full domain name (e.g., example.is404.net)</li>
+    <li>The type of record (e.g., A, CNAME, MX, TXT)</li>
+    <li>The content of the record (e.g., the IP address for an A record, or the target for a CNAME record)</li>
+    <li>The TTL (time to live) for the record (e.g., 1, 120, 3600). You can leave this at the default of 1.</li>
+  </ul>
+</p>
 <form method="POST">
   <label for="name">Name:</label>
   <input type="text" name="name" value="" /><br />
