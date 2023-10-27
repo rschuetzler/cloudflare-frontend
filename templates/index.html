@@ -34,7 +34,13 @@
           <td>{{ record.type }}</td>
           <td>{{ record.content }}</td>
           <td><a href="{{ record.edit_url }}">Edit</a></td>
-          <td><a href="{{ record.delete_url }}">DELETE</a></td>
+          <td>
+            <a
+              href="{{ record.delete_url }}"
+              onclick="return confirm('Are you sure you want to delete record {{ record.name }} with content {{ record.content }}?')"
+              >DELETE</a
+            >
+          </td>
         </tr>
         {% endif %} {% endfor %}
       </tbody>
