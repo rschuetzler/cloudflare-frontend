@@ -42,6 +42,7 @@ async def read_root(request: Request, page: int = 1, q: str = None):
         "paginator": range(1, total_pages + 1),
     }
     dns_records = response["result"]
+    # print(dns_records)
     for record in dns_records:
         record["edit_url"] = f"/edit/{record['id']}"
         record["delete_url"] = f"/delete/{record['id']}"
