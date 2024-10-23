@@ -102,7 +102,7 @@ async def create_dns_record(
     )
 
     client_ip = request.client.host
-    logger.info(f"CREATE  - Record created by {client_ip}: name={name}, type={type}")
+    logger.info(f"CREATE - Record created by {client_ip}: name={name}, type={type}")
 
     return {"message": "DNS record created successfully"}
 
