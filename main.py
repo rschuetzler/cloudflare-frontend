@@ -1,3 +1,4 @@
+import logging
 import os
 import secrets
 
@@ -23,6 +24,13 @@ templates = Jinja2Templates(directory="templates")
 cf = CloudFlare.CloudFlare(token=TOKEN, raw=True)
 
 security = HTTPBasic()
+
+# Configure logging
+log_file_path = "app.log"
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s',
+                    handlers=[logging.FileHandler(log_file_path), logging.StreamHandler()])
+logger = logging.getLogger(__name__)
+
 
 def verify_credentials(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, USERNAME)
@@ -69,7 +77,7 @@ async def read_root(request: Request, page: int = 1, q: str = None, credentials:
     )
 
 
-@app.get("/create", response_class=HTMLResponse)
+@app.get("/create", response_class=HTMLResponse )
 async def show_create_page(request: Request):
     return templates.TemplateResponse("new.html", {"request": request})
 
@@ -81,6 +89,7 @@ async def create_dns_record(
     content: str = Form(...),
     type: str = Form(...),
     ttl: int = Form(...),
+     credentials: HTTPBasicCredentials = Depends(verify_credentials)
 ):
     response = cf.zones.dns_records.post(
         ZONE,
@@ -92,16 +101,20 @@ async def create_dns_record(
         },
     )
 
+    client_ip = request.client.host
+    logger.info(f"CREATE  - Record created by {client_ip}: name={name}, type={type}")
+
     return {"message": "DNS record created successfully"}
 
 
 @app.get("/edit/{record_id}", response_class=HTMLResponse)
-async def edit_dns_record(request: Request, record_id: str):
+async def edit_dns_record(request: Request, record_id: str, credentials: HTTPBasicCredentials = Depends(verify_credentials)):
     response = cf.zones.dns_records.get(
         ZONE,
         record_id,
     )
     dns_record = response["result"]
+
 
     return templates.TemplateResponse(
         "edit.html",
@@ -116,7 +129,7 @@ async def update_dns_record(
     name: str = Form(...),
     content: str = Form(...),
     type: str = Form(...),
-    ttl: int = Form(...),
+    ttl: int = Form(...), credentials: HTTPBasicCredentials = Depends(verify_credentials)
 ):
     response = cf.zones.dns_records.put(
         ZONE,
@@ -128,15 +141,21 @@ async def update_dns_record(
             "ttl": ttl,
         },
     )
+    
+    client_ip = request.client.host
+    logger.info(f"EDIT   - Record updated by {client_ip}: name={name}, type={type}")
 
     return {"message": "DNS record updated successfully"}
 
 
 @app.get("/delete/{record_id}")
-async def delete_dns_record(request: Request, record_id: str):
+async def delete_dns_record(request: Request, record_id: str, credentials: HTTPBasicCredentials = Depends(verify_credentials)):
     response = cf.zones.dns_records.delete(
         ZONE,
         record_id,
     )
+
+    client_ip = request.client.host
+    logger.info(f"DELETE - Record deleted by {client_ip}: {record_id}")
 
     return {"message": "DNS record deleted successfully"}
