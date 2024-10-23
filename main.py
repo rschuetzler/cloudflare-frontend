@@ -1,26 +1,42 @@
 import os
+import secrets
 
 import CloudFlare
 from dotenv import find_dotenv, load_dotenv
-from fastapi import FastAPI, Form, Request
+from fastapi import Depends, FastAPI, Form, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 
 load_dotenv(find_dotenv())  # Load environment variables from .env file
 
 TOKEN = os.getenv("CLOUDFLARE_TOKEN")
 ZONE = os.getenv("CLOUDFLARE_ZONE")
+USERNAME = os.getenv("BASIC_AUTH_USERNAME")
+PASSWORD = os.getenv("BASIC_AUTH_PASSWORD")
+
+print(TOKEN, ZONE, USERNAME, PASSWORD)
 
 app = FastAPI(debug=True)
 templates = Jinja2Templates(directory="templates")
 
 cf = CloudFlare.CloudFlare(token=TOKEN, raw=True)
 
-# Remove this before deploying
+security = HTTPBasic()
 
+def verify_credentials(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = secrets.compare_digest(credentials.username, USERNAME)
+    correct_password = secrets.compare_digest(credentials.password, PASSWORD)
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+            )
+        
 
 @app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request, page: int = 1, q: str = None):
+async def read_root(request: Request, page: int = 1, q: str = None, credentials: HTTPBasicCredentials = Depends(verify_credentials)):
     per_page = 50
     params = {"per_page": per_page, "page": page}
     if q:
